@@ -1,0 +1,64 @@
+---
+title: Brookings Hackathon - Ending Rural Hunger (2015)
+author: Keith Hughitt
+date: 2015/09/12
+---
+
+```{r knitr_settings, include=FALSE}
+library('knitr')
+opts_knit$set(progress=FALSE, verbose=TRUE)
+opts_chunk$set(fig.width=1920/96,
+               fig.height=1080/96,
+               dpi=96)
+options(digits=4)
+options(stringsAsFactors=FALSE)
+options(knitr.duplicate.label='allow')
+
+rm(list=ls())    # Clean up any existing variables
+```
+
+```{r load_data}
+library('dplyr')
+library('d3heatmap')
+
+# load data
+df = tbl_df(read.delim('Recipient_Scorecard_10th_September_Rescaled.tsv',
+                       strip.white=TRUE))
+
+# remove region rows
+regions = c("South Asia", "Europe & Central Asia", "Middle East & North
+            Africa", "Sub-Saharan Africa", "Latin America & Caribbean", 
+            "East Asia & Pacific", "Low income", "Upper middle income", 
+            "Lower middle income", "High income: nonOECD", "High income: OECD",
+            "Developing Country", "Fragile States")
+df = df %>% filter(!Country %in% regions)
+
+df = df %>% select(-X)
+# Fix numeric columns
+#non_numeric_cols = c("Country", "iso3c", "Regioncode", "Income.Group")
+#numeric_cols     = colnames(df)[colnames(df) != non_numeric_cols]
+
+#numeric_cols = colnames(df)[5:ncol(df)]
+
+# not working..
+#df %>% mutate_each_(as.numeric(gsub(',', '', .)), numeric_cols)
+
+#for (x in numeric_cols) {
+#    df[,x] = as.numeric(gsub(',', '', df[,x]))
+#}
+
+# Fix numeric cols
+# http://stackoverflow.com/questions/1523126/how-to-read-a-csv-file-in-r-where-some-numbers-contain-commas
+numeric_cols = 5:ncol(df)
+df[,numeric_cols] = lapply(df[,numeric_cols], function(df) {
+    as.numeric(gsub(",", "", df))
+})
+
+# For now, drop Countries with incomplete data...
+df = df[complete.cases(df),]
+
+# Correlation matrix
+cor_matrix = cor(df[,numeric_cols])
+
+d3heatmap(cor_matrix)
+```
