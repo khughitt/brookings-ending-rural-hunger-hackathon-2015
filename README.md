@@ -1,33 +1,9 @@
----
-title: Brookings Hackathon - Ending Rural Hunger (2015)
-author: Keith Hughitt
-date: 2015/09/12
-output:
-    md_document:
-        variant: markdown_github
-    html_document:
-        toc: false
----
-
-```{r knitr_settings, include=FALSE}
-library('knitr')
-opts_knit$set(progress=FALSE, verbose=TRUE)
-opts_chunk$set(fig.width=1080/96,
-               fig.height=1080/96,
-               dpi=96)
-options(digits=4)
-options(stringsAsFactors=FALSE)
-options(knitr.duplicate.label='allow')
-
-rm(list=ls())    # Clean up any existing variables
-```
-
 Load data
 ---------
 
 Note: For interactive heatmaps, `heatmap.2` can be swapped out for `d3heatmap`.
 
-```{r load_data}
+``` r
 #library('d3heatmap')
 library('dplyr')
 library('gplots')
@@ -81,28 +57,34 @@ rownames(x) = df$Country
 heatmap.2(as.matrix(x), col=brewer.pal(9, 'BuPu'))
 ```
 
+![](README_files/figure-markdown_github/load_data-1.png)
+
 Country and variable trends
 ---------------------------
 
 ### Needs and Policies variable correlations
 
-```{r needs_and_policies_variable_heatmap}
+``` r
 #d3heatmap(cor(df[,needs_and_policies_cols]))
 heatmap.2(cor(df[,needs_and_policies_cols]))
 ```
 
+![](README_files/figure-markdown_github/needs_and_policies_variable_heatmap-1.png)
+
 ### Country correlations
 
-```{r needs_and_policies_variable_heatmap}
+``` r
 x = cor(t(df[,needs_and_policies_cols]))
 rownames(x) = colnames(x) = df$Country
 #d3heatmap(x)
 heatmap.2(as.matrix(x))
 ```
 
+![](README_files/figure-markdown_github/needs_and_policies_variable_heatmap-1-1.png)
+
 ### Variable distributions
 
-```{r variable_densities}
+``` r
 # variable category
 categories = read.csv('Recipient_Scorecard_10th_September_Rescaled_Categories.csv',
                       header=FALSE)
@@ -110,7 +92,11 @@ categories = read.csv('Recipient_Scorecard_10th_September_Rescaled_Categories.cs
 # long version of data
 df_ind = df[,needs_and_policies_cols]
 df_long = melt(df_ind)
+```
 
+    ## No id variables; using all as measure variables
+
+``` r
 # add categories
 df_long$category = rep(as.factor(as.character(categories)), each=nrow(df_ind))
 
@@ -118,7 +104,6 @@ df_long$category = rep(as.factor(as.character(categories)), each=nrow(df_ind))
 ggplot(df_long, aes(x=value, group=variable)) + 
     geom_density() +
     facet_grid(category~.)
-
-
 ```
 
+![](README_files/figure-markdown_github/variable_densities-1.png)
