@@ -7,7 +7,7 @@ date: 2015/09/12
 ```{r knitr_settings, include=FALSE}
 library('knitr')
 opts_knit$set(progress=FALSE, verbose=TRUE)
-opts_chunk$set(fig.width=1920/96,
+opts_chunk$set(fig.width=1080/96,
                fig.height=1080/96,
                dpi=96)
 options(digits=4)
@@ -17,9 +17,14 @@ options(knitr.duplicate.label='allow')
 rm(list=ls())    # Clean up any existing variables
 ```
 
+Load data
+---------
+
 ```{r load_data}
 library('dplyr')
 library('d3heatmap')
+library('reshape2')
+library('ggplot2')
 
 # load data
 df = tbl_df(read.delim('Recipient_Scorecard_10th_September_Rescaled.tsv',
@@ -57,8 +62,50 @@ df[,numeric_cols] = lapply(df[,numeric_cols], function(df) {
 # For now, drop Countries with incomplete data...
 df = df[complete.cases(df),]
 
-# Correlation matrix
-cor_matrix = cor(df[,numeric_cols])
+# Indicator variables
+needs_and_policies_cols = 10:105
 
-d3heatmap(cor_matrix)
+x = df[,needs_and_policies_cols]
+rownames(x) = df$Country
+d3heatmap(x, colors='BuPu')
 ```
+
+Country and variable trends
+---------------------------
+
+### Needs and Policies variable correlations
+
+```{r needs_and_policies_variable_heatmap}
+d3heatmap(cor(df[,needs_and_policies_cols]))
+```
+
+### Country correlations
+
+```{r needs_and_policies_variable_heatmap}
+x = cor(t(df[,needs_and_policies_cols]))
+rownames(x) = colnames(x) = df$Country
+d3heatmap(x)
+```
+
+### Variable distributions
+
+```{r variable_densities}
+# variable category
+categories = read.csv('Recipient_Scorecard_10th_September_Rescaled_Categories.csv',
+                      header=FALSE)
+
+# long version of data
+df_ind = df[,needs_and_policies_cols]
+df_long = melt(df_ind)
+
+# add categories
+df_long$category = rep(as.factor(as.character(categories)), each=nrow(df_ind))
+
+#ggplot(df_long, aes(x=value, group=variable, color=category)) + geom_density()
+ggplot(df_long, aes(x=value, group=variable)) + 
+    geom_density() +
+    facet_grid(category~.)
+
+
+```
+
