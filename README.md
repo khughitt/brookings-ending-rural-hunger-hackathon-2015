@@ -6,6 +6,20 @@ Note: For interactive heatmaps, `heatmap.2` can be swapped out for `d3heatmap`.
 ``` r
 #library('d3heatmap')
 library('dplyr')
+```
+
+    ## 
+    ## Attaching package: 'dplyr'
+    ## 
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+    ## 
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
 library('gplots')
 library('reshape2')
 library('ggplot2')
@@ -54,7 +68,7 @@ x = df[,needs_and_policies_cols]
 rownames(x) = df$Country
 
 #d3heatmap(x, colors='BuPu')
-heatmap.2(as.matrix(x), col=brewer.pal(9, 'BuPu'))
+heatmap.2(as.matrix(x), col=brewer.pal(9, 'BuPu'), trace='none')
 ```
 
 ![](README_files/figure-markdown_github/load_data-1.png)
@@ -66,7 +80,7 @@ Country and variable trends
 
 ``` r
 #d3heatmap(cor(df[,needs_and_policies_cols]))
-heatmap.2(cor(df[,needs_and_policies_cols]))
+heatmap.2(cor(df[,needs_and_policies_cols]), trace='none')
 ```
 
 ![](README_files/figure-markdown_github/needs_and_policies_variable_heatmap-1.png)
@@ -77,7 +91,7 @@ heatmap.2(cor(df[,needs_and_policies_cols]))
 x = cor(t(df[,needs_and_policies_cols]))
 rownames(x) = colnames(x) = df$Country
 #d3heatmap(x)
-heatmap.2(as.matrix(x))
+heatmap.2(as.matrix(x), trace='none')
 ```
 
 ![](README_files/figure-markdown_github/needs_and_policies_variable_heatmap-1-1.png)

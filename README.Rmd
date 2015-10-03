@@ -78,7 +78,7 @@ x = df[,needs_and_policies_cols]
 rownames(x) = df$Country
 
 #d3heatmap(x, colors='BuPu')
-heatmap.2(as.matrix(x), col=brewer.pal(9, 'BuPu'))
+heatmap.2(as.matrix(x), col=brewer.pal(9, 'BuPu'), trace='none')
 ```
 
 Country and variable trends
@@ -88,7 +88,7 @@ Country and variable trends
 
 ```{r needs_and_policies_variable_heatmap}
 #d3heatmap(cor(df[,needs_and_policies_cols]))
-heatmap.2(cor(df[,needs_and_policies_cols]))
+heatmap.2(cor(df[,needs_and_policies_cols]), trace='none')
 ```
 
 ### Country correlations
@@ -97,7 +97,7 @@ heatmap.2(cor(df[,needs_and_policies_cols]))
 x = cor(t(df[,needs_and_policies_cols]))
 rownames(x) = colnames(x) = df$Country
 #d3heatmap(x)
-heatmap.2(as.matrix(x))
+heatmap.2(as.matrix(x), trace='none')
 ```
 
 ### Variable distributions
